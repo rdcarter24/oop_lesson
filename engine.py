@@ -4,8 +4,8 @@ import pyglet
 from pyglet.window import key
 from core import GameElement
 
-SCREEN_X = 800
-SCREEN_Y = 700
+SCREEN_X = 1000
+SCREEN_Y = 1000
 
 game_window = pyglet.window.Window(SCREEN_X, SCREEN_Y)
 
@@ -57,6 +57,7 @@ class Board(object):
     def __init__(self, width = 3, height = 3):
         self.width = width
         self.height = height
+        self.currentboard = 0
 
         # Screen center - half of board width
         board_width_px = width * TILE_WIDTH
@@ -165,6 +166,28 @@ class Board(object):
                 el = self.content_layer[y][x]
                 if el:
                     self.draw_active(el.sprite, x, y)
+
+    def save_board(self, width, height):
+        board_dict = {}
+
+        for x in range(width):
+            for y in range(height):
+                board_el = self.get_el(x, y)
+                if board_el != None:
+                    board_dict[(x,y)] = board_el
+
+        return board_dict
+
+    def write_board(self, level):
+        for pos in level.keys():
+            if pos != "PLAYER_START":
+                self.register(level[pos])
+                self.set_el(pos[0], pos[1], level[pos])
+
+    def clear_board(self, width, height):
+        for x in range(width):
+            for y in range(height):
+                self.del_el(x, y)
 
 
 class Obstacle(GameElement):
